@@ -1,4 +1,4 @@
-from src.Query.analisar_threads_positivo_negativo import AnalisarThreadsPositivoNegativo
+from src.query.get_threads_positive_negative import ThreadsPositiveNegative
 
 import sys
 
@@ -9,7 +9,7 @@ class Main:
         self.filename = input("Filename: ")
     
     def processar(self):
-        AnalisarThreadsPositivoNegativo(self.folder_name, self.filename).processar()
+        ThreadsPositiveNegative(self.folder_name, self.filename).processar()
         
 m = Main()
 m.processar()
