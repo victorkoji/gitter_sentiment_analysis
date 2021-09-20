@@ -1,4 +1,4 @@
-from src.query.analisar_threads_por_usuario import AnalisarThreadsPorUsuario
+from src.query.get_thread_by_user import ThreadByUser
 
 class Main:
     
@@ -8,7 +8,7 @@ class Main:
         self.user = input("Username: ")
     
     def process(self):
-        AnalisarThreadsPorUsuario(self.folder_name, self.filename, self.user).processar()
+        ThreadByUser(self.folder_name, self.filename, self.user).processar()
 
 m = Main()
 m.process()
