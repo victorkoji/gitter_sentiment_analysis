@@ -8,26 +8,27 @@ import pandas as pd
 import re, math
 import nltk
 
-from collections import Counter
+from config.config import Config
 from nltk.collocations import *
 from nltk.tokenize import word_tokenize
 
-class Identificar:
+class IdentifyThreads:
 
-    def __init__(self, pasta_tema, nome_arquivo):
-        self.pasta_tema = pasta_tema
-        self.nome_arquivo = nome_arquivo
-        #Caminho do arquivo
-        self.path_arquivo = f"./ChatRooms/{pasta_tema}/{nome_arquivo}/{nome_arquivo}"
+    def __init__(self, folder_name, filename):
+        config = Config(folder_name, filename)
+        self.file_path = config.get_path_prefix_filename()
+        self.folder_name = folder_name
+        self.filename = filename
+        print("Starting thread identification")
 
-    def processar(self):
-        texts = pd.read_csv(f'{self.path_arquivo}_threads_pre_processado.csv', sep = '|')
+    def process(self):
+        texts = pd.read_csv(f'{self.file_path}_threads_pre_processado.csv', sep = '|')
         print("data loaded ....")
 
-        #O dataset a ser lido precisa ter as colunas abaixo para funcionar.
-        #A coluna clean é referente ao texto pré-processado.
-        #A coluna sent é referente a data e hora da mensagem.
-        #A coluna username é referente ao nome do usuário da mensagem.
+        # The dataset to be read must have the columns below to work.
+        # The clean column refers to pre-processed text.
+        # The column sent refers to the date and time of the message.
+        # The username column refers to the username of the message.
         texts = texts[['id', 'text', 'clean', 'sent', "diff_date_user", 'username']]
         texts['sent'] = pd.to_datetime(texts['sent'])
         texts['chatroom'] = "" #Coluna adicionada
@@ -61,13 +62,12 @@ class Identificar:
         print("bigrams done ....")
 
         identify_threads = self.identify_threads(texts)
-        identify_threads.to_csv(fr"{self.path_arquivo}_threads_identificadas.csv", sep = '|')
+        identify_threads.to_csv(fr"{self.file_path}_threads_identificadas.csv", sep = '|')
 
     def unique(self, a):
         a = np.ascontiguousarray(a)
         unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
         return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
-
 
     def identify_threads(self, texts):
 

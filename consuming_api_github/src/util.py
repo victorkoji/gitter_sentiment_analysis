@@ -1,19 +1,15 @@
-import urllib.request, urllib.response
+from os import sep
+import urllib.response
 import requests
-from src.config import Config
-import datetime, json
+import json
 import os.path
+import pandas as pd
 
 class Util:
 
 	# Call a GET request on the URL and return JSON data
 	def get_json(url: str) -> dict:
-		headers = {
-			'Authorization':'Bearer ' + Config.get_token(),
-			'Accept': 'application/json'
-		}
-		
-		response = requests.get(url, headers=headers)
+		response = requests.get(url)
 		return response.json()
 
 	# Write data to a file on disk
@@ -23,8 +19,6 @@ class Util:
 		if os.path.isfile(path): 
 			with open(path) as json_file: 
 				json_exist = json.load(json_file) 
-
-				json_exist = data + json_exist
 
 				json_data: str = json.JSONEncoder().encode(json_exist)
 
@@ -39,3 +33,10 @@ class Util:
 			out_file = open(path, 'w')
 			out_file.write(json_data)
 			out_file.close()
+	
+	def transformJsonToCsv(path: str):
+		print(path)
+		df = pd.read_json(path)
+		path_csv = path.replace(".json", ".csv")
+		df.to_csv(path_csv, encoding='utf-8', index=False, sep="|")
+
