@@ -5,7 +5,7 @@ class Main:
     def __init__(self):
         self.folder_name = input("Folder name: ")
         self.filename = input("Filename: ")
-        self.thread_id = input("Thread ID: ")
+        self.thread_id = input("Threads ID: ")
     
     def process(self):
         ThreadById(self.folder_name, self.filename, self.thread_id).process()
