@@ -2,8 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import os
-import math
+import os, math
 
 from config.config import Config
 from datetime import datetime
@@ -205,7 +204,7 @@ class Graph:
     #### Threads x Messages x Sentiments ####
     def graph_threads_by_messages_by_sentiments(self, graph_classification_by_thread):
 
-        # Normalizar as Threads
+        # Normalize Threads
         # graph_classification_by_thread = self.normalize_number_threads(graph_classification_by_thread)
 
         number_threads_by_graph = 50

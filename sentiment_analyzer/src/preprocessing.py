@@ -34,7 +34,7 @@ class Preprocessing:
 
 
     def process(self):
-        print(self.file_path)
+        
         # Create a csv file from data JSON
         with open(f"{self.file_path}.json", encoding='utf-8-sig') as f_input:
             df = pd.read_json(f_input)
@@ -64,10 +64,6 @@ class Preprocessing:
         # Create the folder
         if not os.path.exists(f"{self.file_path}"):
             os.makedirs(f"{self.file_path}")
-            
-        # Move files to a specific folder
-        # os.replace(f"{self.file_path}.csv", f"{self.file_path}/{self.filename}.csv")
-        # os.replace(f"{self.file_path}_threads_pre_processado.csv", f"{self.file_path}/{self.filename}_threads_pre_processado.csv")
 
     # Main function
     def Preprocessing(self, instancia):
@@ -106,18 +102,7 @@ class Preprocessing:
     # Remove punctuation and links as they don't add any extra information.
     # Messages starting with hexadecimal code will be ignored
     def data_cleaning(self, instancia):
-        # hexadecimal = instancia[:2]
-        # excecao_1 = "093c7e07b4a916b690e784b0374c7f618f1ea4be"
-
-        # if hexadecimal != "0x" and excecao_1 not in instancia:
-        #     # Transform to string
-        #     instancia = re.sub("[^a-zA-Z]", " ", str(instancia))
-
-        #     # Remove numbers
-        #     instancia = re.sub(r"\d+", "", instancia)
-            
-        #     # Remover links, pontos, virgulas,ponto e virgulas dos tweets
-        #     # instancia = re.sub(r"http\S+", "", instancia).lower().replace('.','').replace(';','').replace('-','').replace(':','').replace(')','')
+       
         # Transform to string
         instancia = re.sub("[^a-zA-Z]", " ", str(instancia))
 

@@ -43,19 +43,20 @@ class AnalyzeThreads:
                 ###############################################################
 
                 ####################################################################
-                ################## Threads com inicio negativo #####################
-                #Verificar não está vazia existe && Verificar se ela já foi inserida
+                ################## Threads with start negative #####################
+                # Check is not empty exists && Check if it has already been entered
                 if thread and mapping_threads_start_negative.get(thread) != None :
                     mapping_threads_start_negative[thread]['message_id'] += f",{row['id']}"         
                     mapping_threads_start_negative[thread][row['classify']] += 1
 
-                #Verificar não está vazia && Verificar se ela não apareceu em rows antigas
+                # Check is not empty && Check if it did not appear in old rows
+
                 elif thread and row['classify'] == "Negative" and mapping_old_threads.get(thread) == None :
                     mapping_threads_start_negative[thread] = {'thread_id': thread, 'message_id': row['id'], 'Positive': 0, 'Neutral': 0, 'Negative': 0}
                     mapping_threads_start_negative[thread][row['classify']] += 1
                 else:
                     mapping_old_threads[thread] = {'thread_id': thread}
-                ################## Threads com início negativo #####################
+                ################## Threads with start negative #####################
                 ####################################################################
 
         # Create folder
