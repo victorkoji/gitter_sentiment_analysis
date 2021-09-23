@@ -61,10 +61,6 @@ class Preprocessing:
         # Save csv again with formatted data
         df.to_csv(f"{self.file_path}_threads_pre_processado.csv", encoding='utf-8', index=False, sep = '|')
 
-        # Create the folder
-        if not os.path.exists(f"{self.file_path}"):
-            os.makedirs(f"{self.file_path}")
-
     # Main function
     def Preprocessing(self, instancia):
         instancia = self.data_cleaning(instancia)

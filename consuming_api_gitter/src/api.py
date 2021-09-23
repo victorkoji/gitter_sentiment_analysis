@@ -14,7 +14,7 @@ class API:
 		nome_pasta = "ANDROID"
 		chatRooms = {}
 
-		with open('./json/gitter-user-rooms-2021-9-5.ndjson') as f:
+		with open('./json/ANDROID.ndjson') as f:
 			dataChatRooms = ndjson.load(f)
 
 		for chat_room in dataChatRooms:
@@ -64,6 +64,8 @@ class API:
 				else:
 					id = -1
 				contador += len(data)
+
+				print(f"{nome_chatroom} - {contador} messages")
 
 				if data:
 					
