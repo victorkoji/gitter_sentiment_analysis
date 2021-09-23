@@ -9,28 +9,49 @@ class API:
 	def start(self) -> None:
 
 		android_repository = {
-			#ANDROID
-			# "android-open-project": "https://github.com/Trinea/android-open-project",
-			# "magnum": "https://github.com/mosra/magnum",
-			# "sbt-android": "https://github.com/scala-android/sbt-android",
-			# "open-event-attendee-android": "https://github.com/fossasia/open-event-attendee-android",
-			# "frisbee": "https://github.com/gdg-x/frisbee",
-			# "androidannotations": "https://github.com/androidannotations/androidannotations",
-			# "MPAndroidChart": "https://github.com/PhilJay/MPAndroidChart",
-			# "Fossasia": "https://github.com/fossasia/open-event-attendee-android",
-			# "Frisbee": "https://github.com/gdg-x/frisbee",
-			# "Ruboto": "https://github.com/ruboto/ruboto",
-			# "Signal-Android": "https://github.com/signalapp/Signal-Android",
-			# "AndroidImageSlider": "https://github.com/daimajia/AndroidImageSlider",
+			"androidannotations": "https://github.com/androidannotations/androidannotations",
+			"android-components" : "https://github.com/mozilla-mobile/android-components",
+			"AndroidImageSlider": "https://github.com/daimajia/AndroidImageSlider",
+			"android-open-project": "https://github.com/Trinea/android-open-project",
+			"frisbee": "https://github.com/gdg-x/frisbee",
+			"magnum": "https://github.com/mosra/magnum",
+			"MPAndroidChart": "https://github.com/PhilJay/MPAndroidChart",
+			"open-event-attendee-android": "https://github.com/fossasia/open-event-attendee-android",
+			"ruboto": "https://github.com/ruboto/ruboto",
+			"sbt-android": "https://github.com/scala-android/sbt-android",
+			"Signal-Android": "https://github.com/signalapp/Signal-Android",
+			"Android-Password-Store": "https://github.com/android-password-store/Android-Password-Store",
+			"AndroidTraining": "https://github.com/mixi-inc/AndroidTraining",
+			"ffmpeg-android-java": "https://github.com/WritingMinds/ffmpeg-android-java",
+			"litho": "https://github.com/facebook/litho",
+			"macroid": "https://github.com/47degrees/macroid",
+			"material-calendarview": "https://github.com/prolificinteractive/material-calendarview",
+			"python-gcm": "https://github.com/geeknam/python-gcm",
+			"open-source-android-apps": "https://github.com/pcqpcq/open-source-android-apps",
+			"simpletask-android": "https://gitter.im/mpcjanssen/simpletask-android"
 		}
 
 		ios_repository = {
-			#iOS
 			"appium": "https://github.com/appium/appium",
-			# "Bem-Simple-Line-Graph": "https://github.com/Boris-Em/BEMSimpleLineGraph",
-			# "Kitura": "https://github.com/Kitura/Kitura",
-			# "Perfectly-Soft": "https://github.com/PerfectlySoft/Perfect",
-			# "Pure-Swift-Cacao": "https://github.com/PureSwift/Cacao"
+			"BEMSimpleLineGraph": "https://github.com/Boris-Em/BEMSimpleLineGraph",
+			"Kitura": "https://github.com/Kitura/Kitura",
+			"PerfectlySoft": "https://github.com/PerfectlySoft/Perfect",
+			"PureSwiftCacao": "https://github.com/PureSwift/Cacao",
+			"Alcatraz": "https://github.com/alcatraz/Alcatraz",
+			"BEMAnalogClock": "https://github.com/Boris-Em/BEMAnalogClock",
+			"CocoaPods": "https://github.com/CocoaPods/CocoaPods",
+			"CodeHub": "https://github.com/CodeHubApp/CodeHub",
+			"Dollar": "https://github.com/ankurp/Dollar",
+			"iOS-Goodies": "https://github.com/iOS-Goodies/iOS-Goodies",
+			"iOSTraining": "https://github.com/mixi-inc/iOSTraining",
+			"TheUnoPlatform": "https://github.com/unoplatform/uno",
+			"nzero-push": "https://github.com/linitix/nzero-push",
+			"PromiseKit": "https://github.com/mxcl/PromiseKit",
+			"PureLayout": "https://github.com/PureLayout/PureLayout",
+			"sea-c24-iOS-F2": "https://github.com/codefellows/sea-c24-iOS-F2",
+			"tvheadend-iphone-client": "https://github.com/zipleen/tvheadend-iphone-client",
+			"Typhoon": "https://github.com/appsquickly/Typhoon",
+			"wordpress-hybrid-client": "https://github.com/wordpress-clients/hybrid"
 		}
 
 		type_repository = {

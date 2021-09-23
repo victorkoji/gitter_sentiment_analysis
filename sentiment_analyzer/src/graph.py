@@ -249,6 +249,8 @@ class Graph:
 
         # Calculate the median and identify the threads that are above the median
         median = graph_classification_by_thread['total'].median()
+        median_dict = {"mediana": median}
+
         # Filters only threads above the median
         highest_median_threads = graph_classification_by_thread[graph_classification_by_thread['total'] >= median]
         # Gets the thread ID list.
@@ -281,6 +283,9 @@ class Graph:
 
             fig.savefig(f"{self.file_path}/percurso_threads_sentimentos/thread_{thread_id}.png", format='png', transparent=False)
             plt.close(fig)
+
+        df_chatroom_median = pd.DataFrame(median_dict.items())
+        df_chatroom_median.to_csv(f"{self.file_path}/percurso_threads_sentimentos/median.csv", encoding='utf-8', index=False, sep = '|')
 
     # Essa função irá separar por threads com mais de 50 mensagens e menos.
     def grafico_threads_por_mensagens_por_sentimentos_divido(self, graph_classification_by_thread):

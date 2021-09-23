@@ -31,16 +31,16 @@ class Main:
     def process(self):
         # Responsible for processing messages and removing irrelevant text for thread identification
         # Also, it will concatenate adjacent messages from the same user.
-        Preprocessing(self.folder_name, self.filename).process()
+        # Preprocessing(self.folder_name, self.filename).process()
 
-        # Identify threads from preprocessed messages
-        IdentifyThreads(self.folder_name, self.filename).process()
+        # # Identify threads from preprocessed messages
+        # IdentifyThreads(self.folder_name, self.filename).process()
 
         # Classify messages as: Positive, Negative and Neutral
         Classify(self.folder_name, self.filename).process()
 
         # Analyze the data we've obtained looking for patterns and new discoveries.
-        AnalyzeThreads(self.folder_name, self.filename).process()
+        # AnalyzeThreads(self.folder_name, self.filename).process()
 
     def processAllFolder(self):
         for folder_name in os.listdir("../chat_rooms"):
