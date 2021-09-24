@@ -36,7 +36,6 @@ class Util:
 	
 	def transformJsonToCsv(path: str):
 		print(path)
-		df = pd.read_json(path)
+		df = pd.read_json(path, typ='series')
 		path_csv = path.replace(".json", ".csv")
 		df.to_csv(path_csv, encoding='utf-8', index=False, sep="|")
-

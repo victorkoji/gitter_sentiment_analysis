@@ -55,7 +55,7 @@ class API:
 		}
 
 		type_repository = {
-			# "ANDROID": android_repository,
+			"ANDROID": android_repository,
 			"IOS": ios_repository
 		}
 
@@ -83,10 +83,10 @@ class API:
 				data = Util.get_json(url_releases)
 
 				#Criar a pasta de consutas
-				if not os.path.exists(f"../chat_rooms/{type}/{name_project}/Github-data"):
-					os.makedirs(f"../chat_rooms/{type}/{name_project}/Github-data")
+				if not os.path.exists(f"../data/chat_rooms/{type}/{name_project}/Github-data"):
+					os.makedirs(f"../data/chat_rooms/{type}/{name_project}/Github-data")
 
 				if data:
 					# Escreve os dados para o caminho informado
-					Util.write_json(data, f"../chat_rooms/{type}/{name_project}/Github-data/{tipo_busca}.json")
-					Util.transformJsonToCsv(f"../chat_rooms/{type}/{name_project}/Github-data/{tipo_busca}.json")
+					Util.write_json(data, f"../data/chat_rooms/{type}/{name_project}/Github-data/{tipo_busca}.json")
+					Util.transformJsonToCsv(f"../data/chat_rooms/{type}/{name_project}/Github-data/{tipo_busca}.json")

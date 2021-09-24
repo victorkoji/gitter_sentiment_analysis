@@ -74,8 +74,8 @@ class API:
 					# 	os.makedirs(f"../chat_room/{nome_pasta}")
 
 					# Create folder
-					if not os.path.exists(f"../chat_rooms/{nome_pasta}/{nome_chatroom}"):
-						os.makedirs(f"../chat_rooms/{nome_pasta}/{nome_chatroom}")
+					if not os.path.exists(f"../data/chat_rooms/{nome_pasta}/{nome_chatroom}"):
+						os.makedirs(f"../data/chat_rooms/{nome_pasta}/{nome_chatroom}")
 
 					# Create file with data to path informed
-					Util.write_json(data, f"../chat_rooms/{nome_pasta}/{nome_chatroom}/{nome_chatroom}.json")
+					Util.write_json(data, f"../data/chat_rooms/{nome_pasta}/{nome_chatroom}/{nome_chatroom}.json")
