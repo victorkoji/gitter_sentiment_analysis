@@ -111,24 +111,21 @@ class Graph:
         negative = classify.count('Negative')
 
         # Defines the amount of column and its values
-        quantity_columns = np.arange(3)
-        values = [positive, neutral, negative]
+        quantidade_sentimentos = [positive, neutral, negative]
 
         fig, ax = plt.subplots()
         fig.patch.set_facecolor('white')
 
-        colors = ['green', 'grey', 'red']
-
-        label_positive = mpatches.Patch(color='green', label='Positive')
-        label_neutral = mpatches.Patch(color='grey', label='Neutral')
-        label_negative = mpatches.Patch(color='red', label='Negative')
-        
         plt.figure(figsize=(10, 10))
-        plt.bar(quantity_columns, values, color=colors)
-        plt.xticks(quantity_columns, ('Positive', 'Neutral', 'Negative'))
-        plt.xlabel('Sentimentos', labelpad=25, fontsize=16)
-        plt.ylabel('Números Mensagens', labelpad=25, fontsize=16)
-        plt.legend(handles=[label_positive, label_neutral, label_negative], loc=1)
+
+        colors = ['#65fb6a', 'lightgrey', 'lightcoral']
+        labels = ['Positive', 'Neutral', 'Negative']
+        explode = (0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+        
+        plt.title("Número de mensagens X Quantidades de Sentimentos")
+
+        plt.pie(quantidade_sentimentos, labels=labels, explode=explode, colors=colors, autopct='%1.0f%%', shadow=True, startangle=90, textprops={'fontsize': 16})
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
         # Save image
         plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos.png", transparent=False)

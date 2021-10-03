@@ -28,7 +28,7 @@ class API:
 			"material-calendarview": "https://github.com/prolificinteractive/material-calendarview",
 			"python-gcm": "https://github.com/geeknam/python-gcm",
 			"open-source-android-apps": "https://github.com/pcqpcq/open-source-android-apps",
-			"simpletask-android": "https://gitter.im/mpcjanssen/simpletask-android"
+			"simpletask-android": "https://github.com/mpcjanssen/simpletask-android"
 		}
 
 		ios_repository = {
@@ -63,6 +63,30 @@ class API:
 		self.getSearch(type_repository, "issues")
 		self.getSearch(type_repository, "pulls")
 		self.getSearch(type_repository, "stargazers")
+		self.getGeneralInfo(type_repository)
+
+	# Informações gerais do repositório
+	def getGeneralInfo(self, type_repository):
+		for type, repository in type_repository.items():
+			for name_project, url in repository.items():
+
+				name_repository = url.replace("https://github.com/", "")
+
+				# Build URL
+				url_releases = f"{self.url_base_api}/repos/{name_repository}"
+
+				#Busca os dados na url informada
+				data = Util.get_json(url_releases)
+
+
+				#Criar a pasta de consutas
+				if not os.path.exists(f"../data/chat_rooms/{type}/{name_project}/Github-data"):
+					os.makedirs(f"../data/chat_rooms/{type}/{name_project}/Github-data")
+
+				if data:
+					# Escreve os dados para o caminho informado
+					Util.write_json(data, f"../data/chat_rooms/{type}/{name_project}/Github-data/general_info.json")
+					Util.transformJsonToCsvObject(f"../data/chat_rooms/{type}/{name_project}/Github-data/general_info.json")
 
 
 	# Tipo de busca utilizados:
