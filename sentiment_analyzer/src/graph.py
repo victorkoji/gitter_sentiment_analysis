@@ -150,52 +150,31 @@ class Graph:
         fig.savefig(f"{self.file_path}/threads_por_mensagens.png", transparent=False)
         plt.close(fig)
 
-    ######################################
-    #### Quantity Sentiments by Month ####
+    #########################################################
+    #### Quantity Sentiments by Month - Cummulative Line ####
     def graph_sentiments_by_month(self, graph_datetime_thread):
 
-        color_sentiments = {
-            'Positive' : "green",
-            'Neutral' : "grey",
-            'Negative' : "red",
-        }
+        mes_ano = graph_datetime_thread.index
+        positive = np.cumsum(graph_datetime_thread['Positive'])
+        neutral = np.cumsum(graph_datetime_thread['Neutral'])
+        negative = np.cumsum(graph_datetime_thread['Negative'])
 
-        # Search every year
-        years = graph_datetime_thread['Ano'].unique()
+        fig, ax = plt.subplots(figsize=(20,8))
 
-        for year in years:
-            sentiments_by_year = graph_datetime_thread[graph_datetime_thread['Ano'] == year]
+        ax.plot(mes_ano, positive, label="Positive")
+        ax.plot(mes_ano, neutral, label="Neutral")
+        ax.plot(mes_ano, negative, label="Negative")
+        ax.legend()
 
-            # Number of classified values: positive, neutral and negative.
-            sentiments = {
-                "Positive" : sentiments_by_year['Positive'],
-                "Neutral" : sentiments_by_year['Neutral'],
-                "Negative" : sentiments_by_year['Negative'],
-            }
+        ax.set_title("Progressão do Sentimentos")
+        ax.set_ylabel('Quantidade Mensagens')
+        ax.set_xlabel('Meses/Ano')
 
-            for key, quantity_sentiments in sentiments.items():
+        plt.xticks(rotation=-60)
+        plt.grid(True)
 
-                fig, ax = plt.subplots()
-                plt.subplots_adjust(left=0.12, bottom=0.2, right=0.95, top=0.9)
-                plt.figure(figsize=(30, 40))
-
-                x = np.arange(len(sentiments_by_year))
-
-                ax.set_title(key, fontsize=14)
-                ax.set_yticks(x)
-                ax.set_yticklabels(sentiments_by_year.index, fontsize=8)
-
-                ax.barh(x, quantity_sentiments, color=color_sentiments[key])
-
-                ax.set_ylabel('Meses')
-                ax.set_xlabel('Quantidade Sentimentos')
-
-                # Create folder
-                if not os.path.exists(f"{self.file_path}/sentimentos_anual"):
-                    os.makedirs(f"{self.file_path}/sentimentos_anual")
-
-                fig.savefig(f"{self.file_path}/sentimentos_anual/sentimentos_{key}_{year}_por_mes.png", transparent=False)
-                plt.close(fig)
+        fig.savefig(f"{self.file_path}/progressao_sentimentos_mensal.png", transparent=False)
+        plt.close(fig)
 
     #########################################
     #### Threads x Messages x Sentiments ####
