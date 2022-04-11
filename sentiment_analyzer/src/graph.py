@@ -10,28 +10,27 @@ from sklearn.preprocessing import MinMaxScaler
 
 class Graph:
 
-    def __init__(self, df, folder_name, filename):
+    def __init__(self, folder_name, filename):
         config = Config(folder_name, filename)
+        self.filename = filename
         self.file_path = config.get_path_graphs()
-        self.df = df
+        self.file_path_csv = config.get_path_prefix_filename()
+        self.file_path_query_result = config.get_path_query_result()
+        self.df = pd.read_csv(f"{self.file_path_csv}_threads_classificado.csv", usecols = ['id', 'message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'], encoding='utf-8', sep = '|')
         
         plt.rcParams.update({'figure.max_open_warning': 0})
-        print("Started Generating Graphics")
 
     # Method to generate the graph with the amount of positive, neutral and positive messages.
-    def generate_graph(self, classify):
-
-        # Create folder
-        if not os.path.exists(f"{self.file_path}"):
-            os.makedirs(f"{self.file_path}")
+    def generate_graphs(self):
+        print("Started Generating Graphics")
 
         information = self.info_dataset()
-        self.graph_quantity_by_sentiments(classify)
         self.graph_threads_by_messages(information['graph_thread_id'], information['graph_quantity_thread'])
         self.graph_threads_by_messages_by_sentiments(information['graph_classification_by_thread'])
         self.grafico_threads_por_mensagens_por_sentimentos_divido(information['graph_classification_by_thread'])
         self.graph_sentiments_by_month(information['graph_datetime_thread'])
         self.graph_signals_mapping_threads(information['graph_classification_by_thread'], information['route_threads_by_sentiments'])
+        self.graph_quantity_by_sentiments_popular_threads()
 
     def info_dataset(self):
         graph_thread_id = []
@@ -103,6 +102,9 @@ class Graph:
             'route_threads_by_sentiments' : route_threads_by_sentiments
         }
 
+    def generate_graph_classify(self, classify):
+        self.graph_quantity_by_sentiments(classify)
+
     def graph_quantity_by_sentiments(self, classify):
 
         # Number of classified values: positive, neutral and negative.
@@ -129,6 +131,64 @@ class Graph:
 
         # Save image
         plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos.png", transparent=False)
+        plt.close(fig)
+
+    def graph_quantity_by_sentiments_general_threads(self):
+        classify = pd.read_csv(f"{self.file_path_query_result}/{self.filename}_threads_caminhos_gerais.csv", usecols = ['thread_id', 'message_id', 'Positive', 'Neutral', "Negative"], encoding='utf-8', sep = '|')
+
+        # Number of classified values: positive, neutral and negative.
+        positive = classify['Positive'].sum()
+        neutral = classify['Neutral'].sum()
+        negative = classify['Negative'].sum()
+
+        # Defines the amount of column and its values
+        quantidade_sentimentos = [positive, neutral, negative]
+
+        fig, ax = plt.subplots()
+        fig.patch.set_facecolor('white')
+
+        plt.figure(figsize=(10, 10))
+
+        colors = ['#65fb6a', 'lightgrey', 'lightcoral']
+        labels = ['Positive', 'Neutral', 'Negative']
+        explode = (0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+        
+        plt.title("Número de mensagens X Quantidades de Sentimentos")
+
+        plt.pie(quantidade_sentimentos, labels=labels, explode=explode, colors=colors, autopct='%1.0f%%', shadow=True, startangle=90, textprops={'fontsize': 16})
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+        # Save image
+        plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos_threads_populares.png", transparent=False)
+        plt.close(fig)
+
+    def graph_quantity_by_sentiments_popular_threads(self):
+        classify = pd.read_csv(f"{self.file_path_query_result}/{self.filename}_threads_caminhos_populares.csv", usecols = ['thread_id', 'message_id', 'Positive', 'Neutral', "Negative"], encoding='utf-8', sep = '|')
+
+        # Number of classified values: positive, neutral and negative.
+        positive = classify['Positive'].sum()
+        neutral = classify['Neutral'].sum()
+        negative = classify['Negative'].sum()
+
+        # Defines the amount of column and its values
+        quantidade_sentimentos = [positive, neutral, negative]
+
+        fig, ax = plt.subplots()
+        fig.patch.set_facecolor('white')
+
+        plt.figure(figsize=(10, 10))
+
+        colors = ['#65fb6a', 'lightgrey', 'lightcoral']
+        labels = ['Positive', 'Neutral', 'Negative']
+        explode = (0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+        
+        plt.title("Número de mensagens X Quantidades de Sentimentos")
+
+        plt.pie(quantidade_sentimentos, labels=labels, explode=explode, colors=colors, autopct='%1.0f%%', shadow=True, startangle=90, textprops={'fontsize': 16})
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+        # Save image
+        plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos_threads_populares.png", transparent=False)
         plt.close(fig)
 
 

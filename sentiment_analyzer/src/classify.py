@@ -14,7 +14,7 @@ class Classify:
         print("Started Message Classification")
 
     def process(self):
-      
+
         analyzer = SentimentIntensityAnalyzer()
         text = []
         classify = []
@@ -54,5 +54,5 @@ class Classify:
         df.to_csv(fr"{self.file_path}_threads_classificado.csv", index = False, header=True, sep = '|')    
 
         # Generate graph
-        graph = Graph(df, self.folder_name, self.filename)
-        graph.generate_graph(classify)
+        graph = Graph(self.folder_name, self.filename)
+        graph.generate_graph_classify(classify)

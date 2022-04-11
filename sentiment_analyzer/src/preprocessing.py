@@ -5,9 +5,7 @@ import pytz, dateutil.parser
 import nltk
 
 from symspellpy import SymSpell
-from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
 from config.config import Config
 
 ################# Run the first time #################
@@ -66,19 +64,9 @@ class Preprocessing:
         instancia = self.data_cleaning(instancia)
         instancia = self.spell_checker(instancia)
         palavras = self.RemoveStopWords(instancia)
-        #palavras = Stemming(palavras)
         palavras = self.Lemmatization(palavras)
-        #palavras = RemovePunctuation(palavras)
         
         return palavras
-
-    # Function to remove punctuation
-    def RemovePunctuation(self, instancia):
-        palavras = []
-        table = str.maketrans("", "", string.punctuation)
-        for w in instancia.split():
-            palavras.append(w.translate(table))
-        return (" ".join(palavras))
 
     # Function to remove stopwords from our data:
     def RemoveStopWords(self, instancia):
@@ -86,17 +74,7 @@ class Preprocessing:
         palavras = [i for i in instancia.split() if not i in stopwords]
         return (" ".join(palavras))
 
-    # Stemming is the technique of removing suffixes and prefixes from a word.
-    # Por exemplo, o stem da palavra cooking é cook. Um bom algoritmo sabe que “ing” é um sufixo e pode ser removido.
-    def Stemming(self, instancia):
-        stemmer = nltk.stem.RSLPStemmer()
-        palavras = []
-        for w in instancia.split():
-            palavras.append(stemmer.stem(w))
-        return (" ".join(palavras))
-
-    # Remove punctuation and links as they don't add any extra information.
-    # Messages starting with hexadecimal code will be ignored
+    # Remove links as they don't add any extra information.
     def data_cleaning(self, instancia):
        
         # Transform to string
@@ -196,5 +174,3 @@ class Preprocessing:
                 return suggestion.term
         except:
             return message
-
-        
