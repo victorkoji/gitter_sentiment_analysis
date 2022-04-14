@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Shinohara"
+  given-names: "Victor Koji"
+title: "Gitter Sentiment Analysis"
+version: 1.0.0
+doi: 10.5281/zenodo.6462312
+date-released: 2022-04-14
+url: "https://github.com/victorkoji/gitter_sentiment_analysis"
