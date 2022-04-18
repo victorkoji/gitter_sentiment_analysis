@@ -17,7 +17,7 @@ class ThreadsPositiveNegative:
         threads_nao_utilizar = {}
 
         # View data
-        dataset_classificado = pd.read_csv(fr"{self.file_path_prefix}_threads_classificado.csv",  encoding='utf-8', sep = '|')
+        dataset_classificado = pd.read_csv(fr"{self.file_path_prefix}/{self.filename}_threads_classificado.csv",  encoding='utf-8', sep = '|')
 
         for index, row in dataset_classificado.iterrows():
             message_id = row['thread_id'].replace("[", "").replace("]", "").replace(" ", "").split(",")

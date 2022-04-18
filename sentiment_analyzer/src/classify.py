@@ -19,7 +19,7 @@ class Classify:
         text = []
         classify = []
 
-        df = pd.read_csv(f"{self.file_path}_threads_identificadas.csv", usecols = ['id', 'text', 'sent', 'username', "diff_date_user", 'discussionId'], encoding='utf-8', sep = '|')
+        df = pd.read_csv(f"{self.file_path}/{self.filename}_threads_identificadas.csv", usecols = ['id', 'text', 'sent', 'username', "diff_date_user", 'discussionId'], encoding='utf-8', sep = '|')
         df_messages = df['text']
 
         for message in df_messages:
@@ -51,7 +51,7 @@ class Classify:
         df = pd.DataFrame(file_csv, columns= ['id', 'message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'])
 
         # Create csv
-        df.to_csv(fr"{self.file_path}_threads_classificado.csv", index = False, header=True, sep = '|')    
+        df.to_csv(fr"{self.file_path}/{self.filename}_threads_classificado.csv", index = False, header=True, sep = '|')    
 
         # Generate graph
         graph = Graph(self.folder_name, self.filename)

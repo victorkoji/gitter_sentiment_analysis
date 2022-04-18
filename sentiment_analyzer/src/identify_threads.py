@@ -17,7 +17,7 @@ class IdentifyThreads:
         print("Starting thread identification")
 
     def process(self):
-        texts = pd.read_csv(f'{self.file_path}_threads_pre_processado.csv', sep = '|')
+        texts = pd.read_csv(f'{self.file_path}/{self.filename}_threads_pre_processado.csv', sep = '|')
         print("data loaded ....")
 
         # The dataset to be read must have the columns below to work.
@@ -57,7 +57,7 @@ class IdentifyThreads:
         print("bigrams done ....")
 
         identify_threads = self.identify_threads(texts)
-        identify_threads.to_csv(fr"{self.file_path}_threads_identificadas.csv", sep = '|')
+        identify_threads.to_csv(fr"{self.file_path}/{self.filename}_threads_identificadas.csv", sep = '|')
 
     def unique(self, a):
         a = np.ascontiguousarray(a)

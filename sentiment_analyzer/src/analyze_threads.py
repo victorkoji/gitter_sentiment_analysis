@@ -17,7 +17,7 @@ class AnalyzeThreads:
     def process(self):
         # Thread id by message id mapping
         mapping_threads = {}
-        df = pd.read_csv(fr"{self.file_path}_threads_classificado.csv",  encoding='utf-8', sep = '|')
+        df = pd.read_csv(fr"{self.file_path}/{self.filename}_threads_classificado.csv",  encoding='utf-8', sep = '|')
 
         # These 2 objects will be used to save only the threads that start negative.
         mapping_threads_start_negative = {}

@@ -29,14 +29,14 @@ class Main:
 
 
     def process(self):
-        # # Responsible for processing messages and removing irrelevant text for thread identification
-        # # Also, it will concatenate adjacent messages from the same user.
+        # Responsible for processing messages and removing irrelevant text for thread identification
+        # Also, it will concatenate adjacent messages from the same user.
         # Preprocessing(self.folder_name, self.filename).process()
 
         # # Identify threads from preprocessed messages
         # IdentifyThreads(self.folder_name, self.filename).process()
 
-        # # Classify messages as: Positive, Negative and Neutral
+        # Classify messages as: Positive, Negative and Neutral
         Classify(self.folder_name, self.filename).process()
 
         # Analyze the data we've obtained looking for patterns and new discoveries.
@@ -52,12 +52,12 @@ class Main:
                 self.folder_name = folder_name
                 self.filename = project
 
-                # # Responsible for processing messages and removing irrelevant text for thread identification
-                # # Also, it will concatenate adjacent messages from the same user.
-                # Preprocessing(self.folder_name, self.filename).process()
+                # Responsible for processing messages and removing irrelevant text for thread identification
+                # Also, it will concatenate adjacent messages from the same user.
+                Preprocessing(self.folder_name, self.filename).process()
 
-                # # # Identify threads from preprocessed messages
-                # IdentifyThreads(self.folder_name, self.filename).process()
+                # Identify threads from preprocessed messages
+                IdentifyThreads(self.folder_name, self.filename).process()
 
                 # Classify messages as: Positive, Negative and Neutral
                 Classify(self.folder_name, self.filename).process()

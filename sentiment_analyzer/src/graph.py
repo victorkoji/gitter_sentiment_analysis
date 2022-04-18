@@ -6,7 +6,7 @@ import os, math
 
 from config.config import Config
 from datetime import datetime
-from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import MinMaxScaler
 
 class Graph:
 
@@ -16,7 +16,7 @@ class Graph:
         self.file_path = config.get_path_graphs()
         self.file_path_csv = config.get_path_prefix_filename()
         self.file_path_query_result = config.get_path_query_result()
-        self.df = pd.read_csv(f"{self.file_path_csv}_threads_classificado.csv", usecols = ['id', 'message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'], encoding='utf-8', sep = '|')
+        self.df = pd.read_csv(f"{self.file_path_csv}/{self.filename}_threads_classificado.csv", usecols = ['id', 'message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'], encoding='utf-8', sep = '|')
         
         plt.rcParams.update({'figure.max_open_warning': 0})
 
@@ -221,19 +221,19 @@ class Graph:
 
         fig, ax = plt.subplots(figsize=(20,8))
 
-        ax.plot(mes_ano, positive, label="Positive")
-        ax.plot(mes_ano, neutral, label="Neutral")
-        ax.plot(mes_ano, negative, label="Negative")
+        ax.plot(mes_ano, positive, label="Positive", color='#65fb6a')
+        ax.plot(mes_ano, neutral, label="Neutral", color='dimgray')
+        ax.plot(mes_ano, negative, label="Negative", color='lightcoral')
         ax.legend()
 
-        ax.set_title("Progressão do Sentimentos")
+        ax.set_title(self.filename.capitalize())
         ax.set_ylabel('Quantidade Mensagens')
         ax.set_xlabel('Meses/Ano')
 
         plt.xticks(rotation=-60)
         plt.grid(True)
 
-        fig.savefig(f"{self.file_path}/progressao_sentimentos_mensal.png", transparent=False)
+        fig.savefig(f"{self.file_path}/progressao_sentimentos_mensal_completo.png", transparent=False)
         plt.close(fig)
 
     #########################################
@@ -377,12 +377,12 @@ class Graph:
 
 
     # Function to normalize the amount of feelings per thread
-    def normalize_number_threads(self, graph_classification_by_thread):
-        scaler = MinMaxScaler()
+    # def normalize_number_threads(self, graph_classification_by_thread):
+    #     scaler = MinMaxScaler()
         
-        x = graph_classification_by_thread.values
-        x_scaled = scaler.fit_transform(x)
-        graph_classification_by_thread = pd.DataFrame(x_scaled)
-        graph_classification_by_thread.columns = ["Positive", "Neutral", "Negative"]
+    #     x = graph_classification_by_thread.values
+    #     x_scaled = scaler.fit_transform(x)
+    #     graph_classification_by_thread = pd.DataFrame(x_scaled)
+    #     graph_classification_by_thread.columns = ["Positive", "Neutral", "Negative"]
 
-        return graph_classification_by_thread
+    #     return graph_classification_by_thread

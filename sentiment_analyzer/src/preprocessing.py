@@ -9,9 +9,10 @@ from nltk.stem import WordNetLemmatizer
 from config.config import Config
 
 ################# Run the first time #################
-# nltk.download('stopwords')
-# nltk.download('rslp')
-# nltk.download('wordnet')
+nltk.download('stopwords')
+nltk.download('rslp')
+nltk.download('wordnet')
+nltk.download('punkt')
 ################# Run the first time #################
 
 class Preprocessing:
@@ -34,12 +35,12 @@ class Preprocessing:
     def process(self):
         
         # Create a csv file from data JSON
-        with open(f"{self.file_path}.json", encoding='utf-8-sig') as f_input:
+        with open(f"{self.file_path}/{self.filename}.json", encoding='utf-8-sig') as f_input:
             df = pd.read_json(f_input)
-            df.to_csv(f"{self.file_path}.csv", encoding='utf-8', index=False, sep = '|')
+            df.to_csv(f"{self.file_path}/{self.filename}.csv", encoding='utf-8', index=False, sep = '|')
 
         # Read csv
-        df = pd.read_csv(f"{self.file_path}.csv", usecols = ['id','text', 'sent', 'fromUser'], encoding='utf-8', sep = '|')
+        df = pd.read_csv(f"{self.file_path}/{self.filename}.csv", usecols = ['id','text', 'sent', 'fromUser'], encoding='utf-8', sep = '|')
         
         # Renames the column name fromUser to username
         df = df.rename(columns=({'fromUser':'username'}))
@@ -57,7 +58,7 @@ class Preprocessing:
         df.insert(2, "clean", messages)
 
         # Save csv again with formatted data
-        df.to_csv(f"{self.file_path}_threads_pre_processado.csv", encoding='utf-8', index=False, sep = '|')
+        df.to_csv(f"{self.file_path}/{self.filename}_threads_pre_processado.csv", encoding='utf-8', index=False, sep = '|')
 
     # Main function
     def Preprocessing(self, instancia):
