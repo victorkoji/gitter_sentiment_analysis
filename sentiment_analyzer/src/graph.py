@@ -236,49 +236,6 @@ class Graph:
         fig.savefig(f"{self.file_path}/progressao_sentimentos_mensal_completo.png", transparent=False)
         plt.close(fig)
 
-    #########################################
-    #### Threads x Messages x Sentiments ####
-    def graph_threads_by_messages_by_sentiments(self, graph_classification_by_thread):
-
-        # Normalize Threads
-        # graph_classification_by_thread = self.normalize_number_threads(graph_classification_by_thread)
-
-        number_threads_by_graph = 50
-        number_array = 0
-
-        for num_threads in range(1, math.ceil(len(graph_classification_by_thread) / number_threads_by_graph) + 1):
-
-            fig, ax = plt.subplots()
-            plt.title('Threads x Números Mensagens x Classificacão')
-            plt.xlabel('Threads')
-            plt.ylabel('Números Mensagens')
-            plt.figure(figsize=(20, 10))
-
-            total_threads = num_threads * number_threads_by_graph
-
-            if total_threads > len(graph_classification_by_thread):
-                total_threads = len(graph_classification_by_thread)
-
-            classification = graph_classification_by_thread[number_array : total_threads]
-
-            # N = len(classification)
-            positive = classification['Positive']
-            negative = classification['Negative']
-            neutral = classification['Neutral']
-            ind = np.arange(number_array, total_threads)  
-            width = 0.8
-
-            ax.bar(ind, positive, width=width, label='Positive', align='center', color='green')
-            ax.bar(ind, neutral, width=width, label='Neutral', align='center', color='grey')
-            ax.bar(ind, negative, width=width, label='Negative', align='center', color='red')
-            ax.legend()
-            ax.set_xticks(np.arange(number_array, total_threads, 10))
-
-            number_array = total_threads
-
-            fig.savefig(f"{self.file_path}/threads_mensagens_sentimentos_{number_array}.png", format='png', transparent=False)
-            plt.close(fig)
-
     ##############################################
     #### Signal Chart - Messages x Sentiments ####
     def graph_signals_mapping_threads(self, graph_classification_by_thread, route_threads_by_sentiments):
@@ -374,15 +331,3 @@ class Graph:
 
         fig1.savefig(f"{self.file_path}/threads_mensagens_sentimentos_maior_100.png", format='png', transparent=False)
         plt.close(fig1)
-
-
-    # Function to normalize the amount of feelings per thread
-    # def normalize_number_threads(self, graph_classification_by_thread):
-    #     scaler = MinMaxScaler()
-        
-    #     x = graph_classification_by_thread.values
-    #     x_scaled = scaler.fit_transform(x)
-    #     graph_classification_by_thread = pd.DataFrame(x_scaled)
-    #     graph_classification_by_thread.columns = ["Positive", "Neutral", "Negative"]
-
-    #     return graph_classification_by_thread

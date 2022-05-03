@@ -3,10 +3,12 @@ import pandas as pd
 import os, string, re, json, pkg_resources
 import pytz, dateutil.parser
 import nltk
+import codecs
 
 from symspellpy import SymSpell
 from nltk.stem import WordNetLemmatizer
 from config.config import Config
+from nltk.tokenize import word_tokenize
 
 ################# Run the first time #################
 nltk.download('stopwords')
@@ -33,7 +35,7 @@ class Preprocessing:
 
 
     def process(self):
-        
+
         # Create a csv file from data JSON
         with open(f"{self.file_path}/{self.filename}.json", encoding='utf-8-sig') as f_input:
             df = pd.read_json(f_input)
@@ -71,13 +73,16 @@ class Preprocessing:
 
     # Function to remove stopwords from our data:
     def RemoveStopWords(self, instancia):
+        text_tokens = word_tokenize(instancia)
         stopwords = set(nltk.corpus.stopwords.words('english'))
-        palavras = [i for i in instancia.split() if not i in stopwords]
-        return (" ".join(palavras))
+        palavras = [i for i in text_tokens if not i.lower() in stopwords]
+        palavras = (" ".join(palavras))
+
+        return palavras
 
     # Remove links as they don't add any extra information.
     def data_cleaning(self, instancia):
-       
+
         # Transform to string
         instancia = re.sub("[^a-zA-Z]", " ", str(instancia))
 
@@ -172,6 +177,7 @@ class Preprocessing:
         try:
             suggestions = self.sym_spell.lookup_compound(message, max_edit_distance=2, transfer_casing=True)
             for suggestion in suggestions:
+                suggestion.term.decode('utf-8','strict')
                 return suggestion.term
         except:
             return message

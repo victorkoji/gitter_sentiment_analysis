@@ -40,10 +40,12 @@ class AnalyzeThreads:
                 if thread and mapping_threads.get(thread) != None:
                     mapping_threads[thread]['message_id']+= f",{row['id']}"         
                     mapping_threads[thread][row['classify']] += 1
+                    mapping_threads[thread]['total_messages'] += 1
                     mapping_threads[thread]['users'].add(row['username'])
                 elif thread:
-                    mapping_threads[thread] = {'thread_id': thread, 'message_id': row['id'], 'Positive': 0, 'Neutral': 0, 'Negative': 0}
+                    mapping_threads[thread] = {'thread_id': thread, 'message_id': row['id'], 'Positive': 0, 'Neutral': 0, 'Negative': 0, 'total_messages': 0}
                     mapping_threads[thread][row['classify']] += 1
+                    mapping_threads[thread]['total_messages'] += 1
                     mapping_threads[thread]['users'] = {row['username']}
                 ###############################################################
 
@@ -95,15 +97,16 @@ class AnalyzeThreads:
         for key, item in mapping_threads.items():
             messages_array = item['message_id'].split(",")
 
-            if len(item['users']) >= users_median and len(messages_array) >= messages_median:
+            if len(item['users']) > users_median and len(messages_array) > messages_median:
                 threads_to_save.append(item['thread_id'])
 
         with open(fr"{self.file_path_query_result}/{self.filename}_threads_caminhos_populares.csv", 'w') as f:  
-            w = csv.DictWriter(f, fieldnames=['thread_id', 'message_id', 'Positive', 'Neutral', 'Negative'], delimiter="|", extrasaction='ignore')
+            w = csv.DictWriter(f, fieldnames=['thread_id', 'message_id', 'Positive', 'Neutral', 'Negative', 'total_messages', 'total_users'], delimiter="|", extrasaction='ignore')
             w.writeheader()
 
             for key, item in mapping_threads.items():
                 if item['thread_id'] in threads_to_save:
+                    item['total_users'] = len(item['users'])
                     w.writerow(item)
 
 

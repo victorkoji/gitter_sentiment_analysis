@@ -1,6 +1,7 @@
-import sys, os
+import os, math
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import numpy as np
 
 from datetime import datetime
@@ -8,8 +9,8 @@ from config.config import Config
 
 class GeneralGraph:
     def __init__(self):
-        
         self.file_path_general_graph = "../data/general_information/general_graphs"
+        self.path_general_data = f"../data/general_information/general_data"
 
         # Create folder
         if not os.path.exists(f"{self.file_path_general_graph}"):
@@ -20,12 +21,79 @@ class GeneralGraph:
 
     def generate(self):
 
+        self.graph_quantity_sentiments_by_community()
         self.graph_sentiments_by_month()
+        self.graph_quantity_sentiments_popular_threads_by_community()
+        self.graph_distribution_sentiment_most_popular_threads_community()
         self.graph_quantity_by_sentiments_chat_rooms()
-        self.graph_quantity_by_sentiments_general_threads()
+        self.graph_quantity_by_sentiments_general_threads_by_chat_rooms()
         self.graph_quantity_by_sentiments_popular_threads()
-        self.graph_sentiments_by_month()
+
+    # Graphs of the quantity of sentiment by community
+    def graph_quantity_sentiments_by_community(self):
+
+        community = []
+        total_quantity_positive = []
+        total_quantity_neutral = []
+        total_quantity_negative = []
+
+        for folder_name in os.listdir("../data/chat_rooms"):
+            community.append(folder_name)
+
+            quantity_positive = 0
+            quantity_neutral = 0
+            quantity_negative = 0
+
+            for project in os.listdir(f"../data/chat_rooms/{folder_name}"):
+                
+                config = Config(folder_name, project)
+                file_path_prefix = config.get_path_prefix_filename()
+
+                df = pd.read_csv(f"{file_path_prefix}/{project}_threads_classificado.csv", usecols = ['id', 'classify'], encoding='utf-8', sep = '|')
+                classify = df['classify'].value_counts().to_dict()
+
+                positive = classify['Positive']
+                neutral = classify['Neutral']
+                negative = classify['Negative']
+
+                quantity_positive += positive
+                quantity_neutral += neutral
+                quantity_negative += negative
+            
+            total_sentiments = quantity_positive + quantity_neutral + quantity_negative
+
+            porcentage_positive = self.round_half_down((quantity_positive / total_sentiments) * 100, 1)
+            porcentage_neutral = self.round_half_down((quantity_neutral / total_sentiments) * 100, 1)
+            porcentage_negative = self.round_half_down((quantity_negative / total_sentiments) * 100, 1)
+
+            total_quantity_positive.append(porcentage_positive)
+            total_quantity_neutral.append(porcentage_neutral)
+            total_quantity_negative.append(porcentage_negative)
         
+        fig, ax = plt.subplots(figsize=(10,7))
+        ind = np.arange(len(community)) 
+        width = 0.25
+
+        bar1 = plt.bar(ind, total_quantity_positive, width, color = '#65fb6a')
+        bar2 = plt.bar(ind+width, total_quantity_neutral, width, color='lightgrey')
+        bar3 = plt.bar(ind+width*2, total_quantity_negative, width, color = 'lightcoral')
+
+        for i in range(len(community)):
+            plt.text(i, total_quantity_positive[i] + 0.3, str(total_quantity_positive[i]) + "%", ha = 'center')
+            plt.text(i + width, total_quantity_neutral[i] + 0.3, str(total_quantity_neutral[i]) + "%", ha = 'center')
+            plt.text(i + width*2, total_quantity_negative[i] + 0.3, str(total_quantity_negative[i]) + "%", ha = 'center')
+
+        fmt = '%.0f%%'
+        xticks = mtick.FormatStrFormatter(fmt)
+        ax.yaxis.set_major_formatter(xticks)
+
+        plt.title("Sentimentos por Comunidade")
+        plt.xticks(ind+width, community, fontsize=14)
+        plt.legend( (bar1, bar2, bar3), ('Positivo', 'Neutro', 'Negativo') )
+        plt.savefig(f"{self.file_path_general_graph}/dataset_quantidade_sentimentos_por_comunidade.png", transparent=False)
+        plt.close(fig)
+    
+    # Graph of the quantity sentiments for chat rooms
     def graph_quantity_by_sentiments_chat_rooms(self):
 
         for folder_name in os.listdir("../data/chat_rooms"):
@@ -69,15 +137,76 @@ class GeneralGraph:
 
             fig.suptitle('Distribuição dos Sentimentos nos Chat rooms', fontsize=16)
 
-            # Create folder
-            if not os.path.exists(f"{self.file_path_general_graph}/{folder_name}"):
-                os.makedirs(f"{self.file_path_general_graph}/{folder_name}")
-
             # Save image
             plt.savefig(f"{self.file_path_general_graph}/{folder_name}/dataset_quantidade_sentimentos_por_projeto.png", transparent=False)
             plt.close(fig)
 
-    def graph_quantity_by_sentiments_general_threads(self):
+    # Graphs of the quantity sentiments of popular threads by community
+    def graph_quantity_sentiments_popular_threads_by_community(self):
+
+        community = []
+        total_quantity_positive = []
+        total_quantity_neutral = []
+        total_quantity_negative = []
+
+        for folder_name in os.listdir("../data/chat_rooms"):
+            community.append(folder_name)
+
+            quantity_positive = 0
+            quantity_neutral = 0
+            quantity_negative = 0
+
+            for project in os.listdir(f"../data/chat_rooms/{folder_name}"):
+                
+                config = Config(folder_name, project)
+                file_path_prefix = config.get_path_query_result()
+
+                classify = pd.read_csv(f"{file_path_prefix}/{project}_threads_caminhos_populares.csv", usecols = ['thread_id', 'message_id', 'Positive', 'Neutral', "Negative"], encoding='utf-8', sep = '|')
+
+                # Number of classified values: positive, neutral and negative.
+                positive = classify['Positive'].sum()
+                neutral = classify['Neutral'].sum()
+                negative = classify['Negative'].sum()
+
+                quantity_positive += positive
+                quantity_neutral += neutral
+                quantity_negative += negative
+            
+            total_sentiments = quantity_positive + quantity_neutral + quantity_negative
+
+            porcentage_positive = self.round_half_down((quantity_positive / total_sentiments) * 100, 1)
+            porcentage_neutral = self.round_half_down((quantity_neutral / total_sentiments) * 100, 1)
+            porcentage_negative = self.round_half_down((quantity_negative / total_sentiments) * 100, 1)
+
+            total_quantity_positive.append(porcentage_positive)
+            total_quantity_neutral.append(porcentage_neutral)
+            total_quantity_negative.append(porcentage_negative)
+        
+        fig, ax = plt.subplots(figsize=(10,7))
+        ind = np.arange(len(community)) 
+        width = 0.25
+
+        bar1 = plt.bar(ind, total_quantity_positive, width, color = '#65fb6a')
+        bar2 = plt.bar(ind+width, total_quantity_neutral, width, color='lightgrey')
+        bar3 = plt.bar(ind+width*2, total_quantity_negative, width, color = 'lightcoral')
+
+        for i in range(len(community)):
+            plt.text(i, total_quantity_positive[i] + 0.3, str(total_quantity_positive[i]) + "%", ha = 'center')
+            plt.text(i + width, total_quantity_neutral[i] + 0.3, str(total_quantity_neutral[i]) + "%", ha = 'center')
+            plt.text(i + width*2, total_quantity_negative[i] + 0.3, str(total_quantity_negative[i]) + "%", ha = 'center')
+
+        fmt = '%.0f%%'
+        xticks = mtick.FormatStrFormatter(fmt)
+        ax.yaxis.set_major_formatter(xticks)
+
+        plt.title("Sentimentos por Comunidade")
+        plt.xticks(ind+width, community, fontsize=14)
+        plt.legend( (bar1, bar2, bar3), ('Positivo', 'Neutro', 'Negativo') )
+        plt.savefig(f"{self.file_path_general_graph}/dataset_quantidade_sentimentos_threads_popular_por_comunidade.png", transparent=False)
+        plt.close(fig)
+
+    # Graph of the quantity sentiments of general threads by chat rooms
+    def graph_quantity_by_sentiments_general_threads_by_chat_rooms(self):
 
         for folder_name in os.listdir("../data/chat_rooms"):
             count_projects = len(next(os.walk(f"../data/chat_rooms/{folder_name}"))[1]);
@@ -119,14 +248,45 @@ class GeneralGraph:
 
             fig.suptitle('Distribuição dos Sentimentos em Threads Genéricas', fontsize=16)
 
-            # Create folder
-            if not os.path.exists(f"{self.file_path_general_graph}/{folder_name}"):
-                os.makedirs(f"{self.file_path_general_graph}/{folder_name}")
-
             # Save image
             plt.savefig(f"{self.file_path_general_graph}/{folder_name}/dataset_quantidade_sentimentos_threads_gerais.png", transparent=False)
             plt.close(fig)
 
+    # Graph of sentiment distribution of most popular threads by community
+    def graph_distribution_sentiment_most_popular_threads_community(self):
+
+        for community_name in os.listdir("../data/chat_rooms"):
+            fig, ax = plt.subplots(1, figsize=(7, 3))
+            fig.patch.set_facecolor('white')
+
+            df = pd.read_csv(f"{self.path_general_data}/popular_threads_chat_rooms_{community_name}.csv", encoding='utf-8', sep = '|')
+
+            chat_room = df['chat_room'][0]
+
+            # Number of classified values: positive, neutral and negative.
+            positive = df['positive'][0]
+            neutral = df['neutral'][0]
+            negative = df['negative'][0]
+
+            # Defines the amount of column and its values
+            quantidade_sentimentos = [positive, neutral, negative]
+
+            colors = ['#65fb6a', 'lightgrey', 'lightcoral']
+            explode = (0.1, 0, 0)
+
+            ax.pie(quantidade_sentimentos, explode=explode, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90, textprops={'fontsize': 8})
+            ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+            labels = ['Positivo', 'Neutro', 'Negativo']
+            ax.legend(labels=labels, loc='lower left')
+
+            fig.suptitle(chat_room.capitalize(), fontsize=16)
+
+            # Save image
+            plt.savefig(f"{self.file_path_general_graph}/top_popular_threads_by_community_{chat_room}.png", transparent=False)
+            plt.close(fig)
+
+    # Graph of quantity sentiments of popular threads by community
     def graph_quantity_by_sentiments_popular_threads(self):
 
         for folder_name in os.listdir("../data/chat_rooms"):
@@ -169,20 +329,15 @@ class GeneralGraph:
 
             fig.suptitle('Distribuição dos Sentimentos em Threads Populares', fontsize=16)
 
-            # Create folder
-            if not os.path.exists(f"{self.file_path_general_graph}/{folder_name}"):
-                os.makedirs(f"{self.file_path_general_graph}/{folder_name}")
-
             # Save image
             plt.savefig(f"{self.file_path_general_graph}/{folder_name}/dataset_quantidade_sentimentos_threads_populares.png", transparent=False)
             plt.close(fig)
 
-    # Alterar manualmente as datas a serem plotadas.
-    #
+    # Partial graph of the flow of feelings by chat room
     def graph_sentiments_by_month(self):
-
+        
+        # Search for the chat room with the shortest chat lifetime
         smallest_quantity_month_project = float('inf')
-
         for folder_name in os.listdir("../data/chat_rooms"):
             for project in os.listdir(f"../data/chat_rooms/{folder_name}"):
                 config = Config(folder_name, project)
@@ -197,18 +352,14 @@ class GeneralGraph:
                 if len(mes_ano) <= smallest_quantity_month_project:
                     smallest_quantity_month_project = len(mes_ano)
 
+        # Get the amount in a period of 12 months(1 year)
+        smallest_quantity_month_project -= smallest_quantity_month_project % 12
+
         for folder_name in os.listdir("../data/chat_rooms"):
-            count_projects = len(next(os.walk(f"../data/chat_rooms/{folder_name}"))[1]);
-
-            # fig, ax = plt.subplots(count_projects, 1, figsize=(20,8))
-            # fig.set_figheight(4)
-            # fig.patch.set_facecolor('white')
-
-            # num_graph = 0
 
             for project in os.listdir(f"../data/chat_rooms/{folder_name}"):
 
-                fig, ax = plt.subplots(figsize=(20,9))
+                fig, ax = plt.subplots(figsize=(16,7))
 
                 config = Config(folder_name, project)
                 file_path_prefix = config.get_path_prefix_filename()
@@ -230,14 +381,14 @@ class GeneralGraph:
                 ax.plot(mes_ano, negative, label="Negative", color='lightcoral')
                 ax.legend(fontsize=16)
 
-                ax.set_title(project.capitalize(), fontsize=24)
-                ax.set_ylabel('Quantidade Mensagens', fontsize=16)
-                ax.set_xlabel('Meses/Ano', fontsize=16)
+                ax.set_title(project.capitalize(), fontsize=28)
+                ax.set_ylabel('Quantidade Mensagens', fontsize=20)
+                ax.set_xlabel('Meses/Ano', fontsize=20)
 
-                plt.xticks(rotation=-60, fontsize=10)
-                plt.yticks(fontsize=10)
+                plt.xticks(rotation=-60, fontsize=12)
+                plt.yticks(fontsize=12)
                 plt.grid(True)
-                plt.savefig(f"{file_path_graphs}/progressao_sentimentos_mensal_parcial.png", transparent=False)
+                plt.savefig(f"{file_path_graphs}/progressao_sentimentos_mensal_parcial.png",  transparent=False, bbox_inches='tight')
                 plt.close(fig)
 
     def info_dataset(self, df, quantidade_maxima_meses):
@@ -275,10 +426,9 @@ class GeneralGraph:
 
         graph_datetime_thread = pd.DataFrame(graph_datetime_thread).T
 
-        return {
-            'graph_datetime_thread' : graph_datetime_thread
-        }
+        return { 'graph_datetime_thread' : graph_datetime_thread }
 
-
-m = GeneralGraph()
-m.generate()
+    def round_half_down(self, n, decimals=0):
+        n = round(n, 2)
+        multiplier = 10 ** decimals
+        return math.ceil(n*multiplier - 0.5) / multiplier
