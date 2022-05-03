@@ -14,12 +14,12 @@ class Classify:
         print("Started Message Classification")
 
     def process(self):
-      
+
         analyzer = SentimentIntensityAnalyzer()
         text = []
         classify = []
 
-        df = pd.read_csv(f"{self.file_path}_threads_identificadas.csv", usecols = ['id', 'text', 'sent', 'username', "diff_date_user", 'discussionId'], encoding='utf-8', sep = '|')
+        df = pd.read_csv(f"{self.file_path}/{self.filename}_threads_identificadas.csv", usecols = ['id', 'text', 'sent', 'clean', 'username', "diff_date_user", 'discussionId'], encoding='utf-8', sep = '|')
         df_messages = df['text']
 
         for message in df_messages:
@@ -40,6 +40,7 @@ class Classify:
         file_csv = {
             "id": df['id'],
             "message": text,
+            'clean_message': df['clean'],
             "classify": classify,
             "datetime": df['sent'],
             "diff_datetime_messages": df['diff_date_user'],
@@ -48,11 +49,11 @@ class Classify:
         }
 
         # Create pandas data frame
-        df = pd.DataFrame(file_csv, columns= ['id', 'message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'])
+        df = pd.DataFrame(file_csv, columns= ['id', 'message', 'clean_message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'])
 
         # Create csv
-        df.to_csv(fr"{self.file_path}_threads_classificado.csv", index = False, header=True, sep = '|')    
+        df.to_csv(fr"{self.file_path}/{self.filename}_threads_classificado.csv", index = False, header=True, sep = '|')    
 
         # Generate graph
-        graph = Graph(df, self.folder_name, self.filename)
-        graph.generate_graph(classify)
+        graph = Graph(self.folder_name, self.filename)
+        graph.generate_graph_classify(classify)

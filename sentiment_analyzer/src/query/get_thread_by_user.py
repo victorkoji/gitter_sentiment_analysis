@@ -21,7 +21,7 @@ class ThreadByUser:
         threads_caminhos_antigos = {}
 
         # View data
-        df = pd.read_csv(fr"{self.file_path_prefix}_threads_classificado.csv",  encoding='utf-8', sep = '|')
+        df = pd.read_csv(fr"{self.file_path_prefix}/{self.filename}_threads_classificado.csv",  encoding='utf-8', sep = '|')
 
         userMessages = df[df['username'] == self.user]
 

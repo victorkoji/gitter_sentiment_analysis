@@ -3,17 +3,18 @@ import pandas as pd
 import os, string, re, json, pkg_resources
 import pytz, dateutil.parser
 import nltk
+import codecs
 
 from symspellpy import SymSpell
-from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
 from config.config import Config
+from nltk.tokenize import word_tokenize
 
 ################# Run the first time #################
-# nltk.download('stopwords')
-# nltk.download('rslp')
-# nltk.download('wordnet')
+nltk.download('stopwords')
+nltk.download('rslp')
+nltk.download('wordnet')
+nltk.download('punkt')
 ################# Run the first time #################
 
 class Preprocessing:
@@ -34,14 +35,14 @@ class Preprocessing:
 
 
     def process(self):
-        
+
         # Create a csv file from data JSON
-        with open(f"{self.file_path}.json", encoding='utf-8-sig') as f_input:
+        with open(f"{self.file_path}/{self.filename}.json", encoding='utf-8-sig') as f_input:
             df = pd.read_json(f_input)
-            df.to_csv(f"{self.file_path}.csv", encoding='utf-8', index=False, sep = '|')
+            df.to_csv(f"{self.file_path}/{self.filename}.csv", encoding='utf-8', index=False, sep = '|')
 
         # Read csv
-        df = pd.read_csv(f"{self.file_path}.csv", usecols = ['id','text', 'sent', 'fromUser'], encoding='utf-8', sep = '|')
+        df = pd.read_csv(f"{self.file_path}/{self.filename}.csv", usecols = ['id','text', 'sent', 'fromUser'], encoding='utf-8', sep = '|')
         
         # Renames the column name fromUser to username
         df = df.rename(columns=({'fromUser':'username'}))
@@ -59,46 +60,29 @@ class Preprocessing:
         df.insert(2, "clean", messages)
 
         # Save csv again with formatted data
-        df.to_csv(f"{self.file_path}_threads_pre_processado.csv", encoding='utf-8', index=False, sep = '|')
+        df.to_csv(f"{self.file_path}/{self.filename}_threads_pre_processado.csv", encoding='utf-8', index=False, sep = '|')
 
     # Main function
     def Preprocessing(self, instancia):
         instancia = self.data_cleaning(instancia)
         instancia = self.spell_checker(instancia)
         palavras = self.RemoveStopWords(instancia)
-        #palavras = Stemming(palavras)
         palavras = self.Lemmatization(palavras)
-        #palavras = RemovePunctuation(palavras)
         
         return palavras
 
-    # Function to remove punctuation
-    def RemovePunctuation(self, instancia):
-        palavras = []
-        table = str.maketrans("", "", string.punctuation)
-        for w in instancia.split():
-            palavras.append(w.translate(table))
-        return (" ".join(palavras))
-
     # Function to remove stopwords from our data:
     def RemoveStopWords(self, instancia):
+        text_tokens = word_tokenize(instancia)
         stopwords = set(nltk.corpus.stopwords.words('english'))
-        palavras = [i for i in instancia.split() if not i in stopwords]
-        return (" ".join(palavras))
+        palavras = [i for i in text_tokens if not i.lower() in stopwords]
+        palavras = (" ".join(palavras))
 
-    # Stemming is the technique of removing suffixes and prefixes from a word.
-    # Por exemplo, o stem da palavra cooking é cook. Um bom algoritmo sabe que “ing” é um sufixo e pode ser removido.
-    def Stemming(self, instancia):
-        stemmer = nltk.stem.RSLPStemmer()
-        palavras = []
-        for w in instancia.split():
-            palavras.append(stemmer.stem(w))
-        return (" ".join(palavras))
+        return palavras
 
-    # Remove punctuation and links as they don't add any extra information.
-    # Messages starting with hexadecimal code will be ignored
+    # Remove links as they don't add any extra information.
     def data_cleaning(self, instancia):
-       
+
         # Transform to string
         instancia = re.sub("[^a-zA-Z]", " ", str(instancia))
 
@@ -193,8 +177,7 @@ class Preprocessing:
         try:
             suggestions = self.sym_spell.lookup_compound(message, max_edit_distance=2, transfer_casing=True)
             for suggestion in suggestions:
+                suggestion.term.decode('utf-8','strict')
                 return suggestion.term
         except:
             return message
-
-        

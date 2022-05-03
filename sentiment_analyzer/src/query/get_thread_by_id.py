@@ -16,7 +16,7 @@ class ThreadById:
         # Thread id by message id mapping
         found_threads = []
 
-        df = pd.read_csv(fr"{self.file_path_prefix}_threads_classificado.csv",  encoding='utf-8', sep = '|')
+        df = pd.read_csv(fr"{self.file_path_prefix}/{self.filename}_threads_classificado.csv",  encoding='utf-8', sep = '|')
 
         # Remove messages without thread id
         messages_with_thread = df[df['thread_id'] != '['']' ]

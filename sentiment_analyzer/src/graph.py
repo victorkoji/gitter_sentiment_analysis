@@ -6,32 +6,31 @@ import os, math
 
 from config.config import Config
 from datetime import datetime
-from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import MinMaxScaler
 
 class Graph:
 
-    def __init__(self, df, folder_name, filename):
+    def __init__(self, folder_name, filename):
         config = Config(folder_name, filename)
+        self.filename = filename
         self.file_path = config.get_path_graphs()
-        self.df = df
+        self.file_path_csv = config.get_path_prefix_filename()
+        self.file_path_query_result = config.get_path_query_result()
+        self.df = pd.read_csv(f"{self.file_path_csv}/{self.filename}_threads_classificado.csv", usecols = ['id', 'message', 'classify', 'datetime', "diff_datetime_messages", 'username', 'thread_id'], encoding='utf-8', sep = '|')
         
         plt.rcParams.update({'figure.max_open_warning': 0})
-        print("Started Generating Graphics")
 
     # Method to generate the graph with the amount of positive, neutral and positive messages.
-    def generate_graph(self, classify):
-
-        # Create folder
-        if not os.path.exists(f"{self.file_path}"):
-            os.makedirs(f"{self.file_path}")
+    def generate_graphs(self):
+        print("Started Generating Graphics")
 
         information = self.info_dataset()
-        self.graph_quantity_by_sentiments(classify)
         self.graph_threads_by_messages(information['graph_thread_id'], information['graph_quantity_thread'])
         self.graph_threads_by_messages_by_sentiments(information['graph_classification_by_thread'])
         self.grafico_threads_por_mensagens_por_sentimentos_divido(information['graph_classification_by_thread'])
         self.graph_sentiments_by_month(information['graph_datetime_thread'])
         self.graph_signals_mapping_threads(information['graph_classification_by_thread'], information['route_threads_by_sentiments'])
+        self.graph_quantity_by_sentiments_popular_threads()
 
     def info_dataset(self):
         graph_thread_id = []
@@ -103,6 +102,9 @@ class Graph:
             'route_threads_by_sentiments' : route_threads_by_sentiments
         }
 
+    def generate_graph_classify(self, classify):
+        self.graph_quantity_by_sentiments(classify)
+
     def graph_quantity_by_sentiments(self, classify):
 
         # Number of classified values: positive, neutral and negative.
@@ -129,6 +131,64 @@ class Graph:
 
         # Save image
         plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos.png", transparent=False)
+        plt.close(fig)
+
+    def graph_quantity_by_sentiments_general_threads(self):
+        classify = pd.read_csv(f"{self.file_path_query_result}/{self.filename}_threads_caminhos_gerais.csv", usecols = ['thread_id', 'message_id', 'Positive', 'Neutral', "Negative"], encoding='utf-8', sep = '|')
+
+        # Number of classified values: positive, neutral and negative.
+        positive = classify['Positive'].sum()
+        neutral = classify['Neutral'].sum()
+        negative = classify['Negative'].sum()
+
+        # Defines the amount of column and its values
+        quantidade_sentimentos = [positive, neutral, negative]
+
+        fig, ax = plt.subplots()
+        fig.patch.set_facecolor('white')
+
+        plt.figure(figsize=(10, 10))
+
+        colors = ['#65fb6a', 'lightgrey', 'lightcoral']
+        labels = ['Positive', 'Neutral', 'Negative']
+        explode = (0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+        
+        plt.title("Número de mensagens X Quantidades de Sentimentos")
+
+        plt.pie(quantidade_sentimentos, labels=labels, explode=explode, colors=colors, autopct='%1.0f%%', shadow=True, startangle=90, textprops={'fontsize': 16})
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+        # Save image
+        plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos_threads_populares.png", transparent=False)
+        plt.close(fig)
+
+    def graph_quantity_by_sentiments_popular_threads(self):
+        classify = pd.read_csv(f"{self.file_path_query_result}/{self.filename}_threads_caminhos_populares.csv", usecols = ['thread_id', 'message_id', 'Positive', 'Neutral', "Negative"], encoding='utf-8', sep = '|')
+
+        # Number of classified values: positive, neutral and negative.
+        positive = classify['Positive'].sum()
+        neutral = classify['Neutral'].sum()
+        negative = classify['Negative'].sum()
+
+        # Defines the amount of column and its values
+        quantidade_sentimentos = [positive, neutral, negative]
+
+        fig, ax = plt.subplots()
+        fig.patch.set_facecolor('white')
+
+        plt.figure(figsize=(10, 10))
+
+        colors = ['#65fb6a', 'lightgrey', 'lightcoral']
+        labels = ['Positive', 'Neutral', 'Negative']
+        explode = (0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+        
+        plt.title("Número de mensagens X Quantidades de Sentimentos")
+
+        plt.pie(quantidade_sentimentos, labels=labels, explode=explode, colors=colors, autopct='%1.0f%%', shadow=True, startangle=90, textprops={'fontsize': 16})
+        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+        # Save image
+        plt.savefig(f"{self.file_path}/dataset_quantidade_sentimentos_threads_populares.png", transparent=False)
         plt.close(fig)
 
 
@@ -161,63 +221,20 @@ class Graph:
 
         fig, ax = plt.subplots(figsize=(20,8))
 
-        ax.plot(mes_ano, positive, label="Positive")
-        ax.plot(mes_ano, neutral, label="Neutral")
-        ax.plot(mes_ano, negative, label="Negative")
+        ax.plot(mes_ano, positive, label="Positive", color='#65fb6a')
+        ax.plot(mes_ano, neutral, label="Neutral", color='dimgray')
+        ax.plot(mes_ano, negative, label="Negative", color='lightcoral')
         ax.legend()
 
-        ax.set_title("Progressão do Sentimentos")
+        ax.set_title(self.filename.capitalize())
         ax.set_ylabel('Quantidade Mensagens')
         ax.set_xlabel('Meses/Ano')
 
         plt.xticks(rotation=-60)
         plt.grid(True)
 
-        fig.savefig(f"{self.file_path}/progressao_sentimentos_mensal.png", transparent=False)
+        fig.savefig(f"{self.file_path}/progressao_sentimentos_mensal_completo.png", transparent=False)
         plt.close(fig)
-
-    #########################################
-    #### Threads x Messages x Sentiments ####
-    def graph_threads_by_messages_by_sentiments(self, graph_classification_by_thread):
-
-        # Normalize Threads
-        # graph_classification_by_thread = self.normalize_number_threads(graph_classification_by_thread)
-
-        number_threads_by_graph = 50
-        number_array = 0
-
-        for num_threads in range(1, math.ceil(len(graph_classification_by_thread) / number_threads_by_graph) + 1):
-
-            fig, ax = plt.subplots()
-            plt.title('Threads x Números Mensagens x Classificacão')
-            plt.xlabel('Threads')
-            plt.ylabel('Números Mensagens')
-            plt.figure(figsize=(20, 10))
-
-            total_threads = num_threads * number_threads_by_graph
-
-            if total_threads > len(graph_classification_by_thread):
-                total_threads = len(graph_classification_by_thread)
-
-            classification = graph_classification_by_thread[number_array : total_threads]
-
-            # N = len(classification)
-            positive = classification['Positive']
-            negative = classification['Negative']
-            neutral = classification['Neutral']
-            ind = np.arange(number_array, total_threads)  
-            width = 0.8
-
-            ax.bar(ind, positive, width=width, label='Positive', align='center', color='green')
-            ax.bar(ind, neutral, width=width, label='Neutral', align='center', color='grey')
-            ax.bar(ind, negative, width=width, label='Negative', align='center', color='red')
-            ax.legend()
-            ax.set_xticks(np.arange(number_array, total_threads, 10))
-
-            number_array = total_threads
-
-            fig.savefig(f"{self.file_path}/threads_mensagens_sentimentos_{number_array}.png", format='png', transparent=False)
-            plt.close(fig)
 
     ##############################################
     #### Signal Chart - Messages x Sentiments ####
@@ -314,15 +331,3 @@ class Graph:
 
         fig1.savefig(f"{self.file_path}/threads_mensagens_sentimentos_maior_100.png", format='png', transparent=False)
         plt.close(fig1)
-
-
-    # Function to normalize the amount of feelings per thread
-    def normalize_number_threads(self, graph_classification_by_thread):
-        scaler = MinMaxScaler()
-        
-        x = graph_classification_by_thread.values
-        x_scaled = scaler.fit_transform(x)
-        graph_classification_by_thread = pd.DataFrame(x_scaled)
-        graph_classification_by_thread.columns = ["Positive", "Neutral", "Negative"]
-
-        return graph_classification_by_thread
